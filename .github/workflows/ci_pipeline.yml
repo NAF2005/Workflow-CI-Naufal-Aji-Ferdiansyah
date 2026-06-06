@@ -16,7 +16,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.10" # Ubah runner utama ke Python 3.10 agar serasi
 
       - name: Install Dependencies
         run: |
@@ -44,13 +44,13 @@ jobs:
           
           RUN_ID=$(ls mlruns/$EXP_ID | grep -v "meta.yaml" | head -n 1)
 
-          echo "Experiment ID Terpilih = $EXP_ID"
-          echo "Run ID Terpilih = $RUN_ID"
+          echo "Experiment ID = $EXP_ID"
+          echo "Run ID = $RUN_ID"
 
           mlflow models build-docker \
             -m "mlruns/$EXP_ID/$RUN_ID/artifacts/model" \
             -n "${{ secrets.DOCKER_USERNAME }}/wine-model:latest" \
-            --env-manager=conda
+            --env-manager=local
 
       - name: Push Docker Image
         run: |
