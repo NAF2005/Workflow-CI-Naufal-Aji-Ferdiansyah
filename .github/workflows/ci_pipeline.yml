@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -33,6 +32,11 @@ jobs:
           cd MLProject
           python modelling.py
 
+      - name: Check Files
+        run: |
+          cd MLProject
+          ls -la
+
       - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
@@ -44,6 +48,10 @@ jobs:
           cd MLProject
           docker build \
             -t ${{ secrets.DOCKER_USERNAME }}/wine-model:latest .
+
+      - name: Show Docker Images
+        run: |
+          docker images
 
       - name: Push Docker Image
         run: |

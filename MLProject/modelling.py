@@ -43,23 +43,24 @@ def main():
         random_state=42
     )
 
-    mlflow.sklearn.autolog()
-
     with mlflow.start_run() as run:
-
         model = RandomForestClassifier(
-            n_estimators=100,
-            random_state=42
-        )
+        n_estimators=100,
+        random_state=42
+    )
 
-        model.fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
-        mlflow.sklearn.log_model(model, "model")
+    mlflow.sklearn.log_model(model, "model")
 
-        print("RUN ID:", run.info.run_id)
+    with open("run_id.txt", "w") as f:
+        f.write(run.info.run_id)
 
-        with open("run_id.txt", "w") as f:
-            f.write(run.info.run_id)
+    with open("experiment_id.txt", "w") as f:
+        f.write(run.info.experiment_id)
+
+    print("RUN_ID =", run.info.run_id)
+    print("EXP_ID =", run.info.experiment_id)
 
 
 if __name__ == "__main__":
