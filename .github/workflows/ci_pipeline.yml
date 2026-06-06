@@ -45,9 +45,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          cd MLProject
-          docker build \
-            -t ${{ secrets.DOCKER_USERNAME }}/wine-model:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/breast-cancer-mlflow:latest .
 
       - name: Show Docker Images
         run: |
