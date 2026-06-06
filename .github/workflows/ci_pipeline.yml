@@ -23,29 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas scikit-learn mlflow==2.17.2
 
-      - name: Check MLflow Version
-        run: |
-          python -c "import mlflow; print('MLflow Version:', mlflow.__version__)"
-
-      - name: Check Environment
-        run: |
-          env | grep MLFLOW || true
-
-      - name: Debug Folder Structure
-        run: |
-          pwd
-          ls -R
-
-      - name: Show modelling.py
-        run: |
-          cd MLProject
-          echo "===== modelling.py ====="
-          cat modelling.py
-
-      - name: Show MLflow Environment
-        run: |
-          env | grep MLFLOW || true
-
       - name: Run Training
         env:
           MLFLOW_TRACKING_URI: file:./mlruns
@@ -53,34 +30,27 @@ jobs:
           cd MLProject
           python modelling.py
 
-      - name: Verify MLruns
-        run: |
-          cd MLProject
-          ls -R mlruns
-
       - name: Login Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Get Run ID
-        run: |
-          cd MLProject
-          echo "RUN_ID=$(cat run_id.txt)" >> $GITHUB_ENV
-
       - name: Build Docker Image
         run: |
           cd MLProject
 
-          EXP_ID=$(find mlruns -mindepth 1 -maxdepth 1 -type d | head -n 1 | xargs basename)
+          EXP_ID=$(ls mlruns | grep -v "models" | head -n 1)
+          
+          RUN_ID=$(ls mlruns/$EXP_ID | grep -v "meta.yaml" | head -n 1)
 
           echo "Experiment ID = $EXP_ID"
           echo "Run ID = $RUN_ID"
 
           mlflow models build-docker \
             -m "mlruns/$EXP_ID/$RUN_ID/artifacts/model" \
-            -n "${{ secrets.DOCKER_USERNAME }}/wine-model:latest"
+            -n "${{ secrets.DOCKER_USERNAME }}/wine-model:latest" \
+            --env-manager=conda
 
       - name: Push Docker Image
         run: |
