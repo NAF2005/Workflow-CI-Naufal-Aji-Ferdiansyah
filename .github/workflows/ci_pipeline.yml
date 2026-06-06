@@ -36,6 +36,16 @@ jobs:
           pwd
           ls -R
 
+      - name: Show modelling.py
+        run: |
+          cd MLProject
+          echo "===== modelling.py ====="
+          cat modelling.py
+
+      - name: Show MLflow Environment
+        run: |
+          env | grep MLFLOW || true
+
       - name: Run Training
         env:
           MLFLOW_TRACKING_URI: file:./mlruns
