@@ -40,12 +40,12 @@ jobs:
         run: |
           cd MLProject
 
-          EXP_ID=$(ls mlruns | grep -v "models" | head -n 1)
+          EXP_ID=$(ls mlruns | grep -E '^[0-9]+$' | head -n 1)
           
           RUN_ID=$(ls mlruns/$EXP_ID | grep -v "meta.yaml" | head -n 1)
 
-          echo "Experiment ID = $EXP_ID"
-          echo "Run ID = $RUN_ID"
+          echo "Experiment ID Terpilih = $EXP_ID"
+          echo "Run ID Terpilih = $RUN_ID"
 
           mlflow models build-docker \
             -m "mlruns/$EXP_ID/$RUN_ID/artifacts/model" \
