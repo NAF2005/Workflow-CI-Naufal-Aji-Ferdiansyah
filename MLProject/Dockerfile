@@ -4,12 +4,14 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
+RUN python -m pip install --upgrade pip
+
 RUN pip install --no-cache-dir \
-    pip<=26.0.1 \
     pandas==2.2.3 \
     scikit-learn==1.6.1 \
     mlflow==2.17.2 \
@@ -20,4 +22,4 @@ RUN pip install --no-cache-dir \
 
 EXPOSE 5000
 
-CMD ["mlflow", "run", ".", "--experiment-name", "Wine Quality Basic", "--no-conda"]
+CMD ["python", "modelling.py"]
