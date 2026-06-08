@@ -23,7 +23,7 @@ jobs:
 
     - name: Run MLflow Project Retraining
       run: |
-        mlflow run . --experiment-name "Wine Quality Basic" --env-manager local
+        mlflow run ./MLProject --experiment-name "Wine Quality Basic" --env-manager local
 
     - name: Upload Training Artifacts to GitHub
       uses: actions/upload-artifact@v4
@@ -45,4 +45,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: username_dockerhub_kamu/wine-quality-predict:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/wine-quality-predict:latest
