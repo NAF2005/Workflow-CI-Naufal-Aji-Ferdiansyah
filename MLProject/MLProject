@@ -1,4 +1,4 @@
-name: Wine_Quality_Project
+name: Wine_Quality_Retraining_Project
 
 conda_env: conda.yaml
 
