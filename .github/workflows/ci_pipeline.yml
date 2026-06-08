@@ -43,6 +43,7 @@ jobs:
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: ./MLProject
+        file: ./MLProject/Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/wine-quality-predict:latest
