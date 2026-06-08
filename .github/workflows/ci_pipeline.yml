@@ -23,7 +23,7 @@ jobs:
 
     - name: Run MLflow Project Retraining
       run: |
-        mlflow run . --experiment-name "Wine Quality Basic" --no-conda
+        mlflow run . --experiment-name "Wine Quality Basic" --env-manager local
 
     - name: Upload Training Artifacts to GitHub
       uses: actions/upload-artifact@v4
