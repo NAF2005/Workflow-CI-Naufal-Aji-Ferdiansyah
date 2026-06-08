@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 import mlflow
 import mlflow.sklearn
@@ -6,31 +5,14 @@ import mlflow.sklearn
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-# Hapus environment MLflow yang mungkin mengganggu
-os.environ.pop("MLFLOW_TRACKING_URI", None)
-os.environ.pop("MLFLOW_REGISTRY_URI", None)
-
-# Paksa tracking ke folder lokal
-TRACKING_DIR = os.path.abspath("mlruns")
-mlflow.set_tracking_uri(f"file://{TRACKING_DIR}")
-
-print("Tracking URI:", mlflow.get_tracking_uri())
-
-
 def main():
 
-    # Buat experiment jika belum ada
     experiment_name = "Wine Quality Basic"
-
-    experiment = mlflow.get_experiment_by_name(experiment_name)
-
-    if experiment is None:
-        experiment_id = mlflow.create_experiment(experiment_name)
-        print(f"Experiment dibuat: {experiment_id}")
 
     mlflow.set_experiment(experiment_name)
 
-    # Load dataset
+    print("Tracking URI:", mlflow.get_tracking_uri())
+
     df = pd.read_csv("winequality_preprocessing.csv")
 
     X = df.drop("quality", axis=1)
@@ -44,23 +26,35 @@ def main():
     )
 
     with mlflow.start_run() as run:
+
         model = RandomForestClassifier(
-        n_estimators=100,
-        random_state=42
-    )
+            n_estimators=100,
+            random_state=42
+        )
 
-    model.fit(X_train, y_train)
+        model.fit(X_train, y_train)
 
-    mlflow.sklearn.log_model(model, "model")
+        accuracy = model.score(X_test, y_test)
 
-    with open("run_id.txt", "w") as f:
-        f.write(run.info.run_id)
+        mlflow.log_param("n_estimators", 100)
+        mlflow.log_param("random_state", 42)
 
-    with open("experiment_id.txt", "w") as f:
-        f.write(run.info.experiment_id)
+        mlflow.log_metric("accuracy", accuracy)
 
-    print("RUN_ID =", run.info.run_id)
-    print("EXP_ID =", run.info.experiment_id)
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            artifact_path="model"
+        )
+
+        with open("run_id.txt", "w") as f:
+            f.write(run.info.run_id)
+
+        with open("experiment_id.txt", "w") as f:
+            f.write(run.info.experiment_id)
+
+        print("RUN_ID =", run.info.run_id)
+        print("EXP_ID =", run.info.experiment_id)
+        print("ACCURACY =", accuracy)
 
 
 if __name__ == "__main__":
